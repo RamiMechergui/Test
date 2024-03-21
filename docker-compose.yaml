@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web_crawl:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: web_crawl 
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  sqlitebrowser:
+    image: linuxserver/sqlitebrowser
+    ports:
+      - "3000:3000"
+    depends_on:
+      - web_crawl
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - ENABLE_UWSGI=true
+    volumes:
+      - ./pascalcoste-shopping.db:/config/database.db
+    container_name: sqlitebrowser
+
+volumes:
+  data-volume:
